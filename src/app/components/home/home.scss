@@ -641,7 +641,7 @@
         position: relative;
         overflow: hidden;
         
-        &.book-btn {
+        &.btn-book {
           background: var(--accent);
           color: white;
           
@@ -662,7 +662,7 @@
           }
         }
         
-        &.cancel-btn {
+        &.btn-cancel {
           background: rgba(239, 68, 68, 0.1);
           color: #ef4444;
           border: 1px solid rgba(239, 68, 68, 0.3);
@@ -670,6 +670,27 @@
           &:hover {
             background: rgba(239, 68, 68, 0.2);
             border-color: #ef4444;
+          }
+        }
+        
+        &.btn-delete {
+          background: rgba(239, 68, 68, 0.1);
+          color: #ef4444;
+          border: 1px solid rgba(239, 68, 68, 0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          
+          &:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+          }
+          
+          i {
+            font-size: 0.9rem;
           }
         }
         

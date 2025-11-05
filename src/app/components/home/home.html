@@ -188,7 +188,13 @@
                         </div>
                     </div>
                     <div class="ride-actions">
-                        <button class="btn-book" [disabled]="ride.availableSeats === 0"
+                        <!-- Show Delete button if user is the driver -->
+                        <button *ngIf="isUserDriver(ride)" class="btn-delete" (click)="deleteRide(ride)">
+                            <i class="fas fa-trash-alt"></i> Delete Ride
+                        </button>
+                        
+                        <!-- Show Book button if user is NOT the driver -->
+                        <button *ngIf="!isUserDriver(ride)" class="btn-book" [disabled]="ride.availableSeats === 0"
                             [class.conflict-btn]="hasConflict(ride.id)" (click)="bookRide(ride)"
                             [title]="hasConflict(ride.id) ? 'Warning: This ride may conflict with your existing bookings' : ''">
                             {{ride.availableSeats > 0 ? (hasConflict(ride.id) ? 'Book (Conflict)' : 'Book Ride') :

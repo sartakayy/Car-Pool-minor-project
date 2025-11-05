@@ -291,6 +291,39 @@ export class Home implements OnInit, OnDestroy {
     });
   }
 
+  deleteRide(ride: Ride) {
+    const confirmDelete = confirm(
+      `⚠️ Delete Ride Confirmation\n\n` +
+      `Are you sure you want to delete this ride?\n\n` +
+      `📍 ${ride.from} → ${ride.to}\n` +
+      `📅 ${ride.date} at ${ride.time}\n` +
+      `🚗 ${ride.car}\n` +
+      `💰 $${ride.pricePerSeat} per seat\n\n` +
+      `This action cannot be undone and will cancel any existing bookings.`
+    );
+
+    if (confirmDelete) {
+      this.loading = true;
+      
+      this.ridesService.deleteRide(ride.id).subscribe({
+        next: () => {
+          this.loading = false;
+          alert('Ride deleted successfully!');
+        },
+        error: (err: any) => {
+          console.error('Error deleting ride:', err);
+          this.loading = false;
+          alert(err.message || 'Failed to delete ride. Please try again.');
+        }
+      });
+    }
+  }
+
+  // Check if current user is the driver of a ride
+  isUserDriver(ride: Ride): boolean {
+    return this.ridesService.isUserDriver(ride);
+  }
+
   // Search and Filter Methods
   onSearchChange(): void {
     this.applySearchAndFilters();

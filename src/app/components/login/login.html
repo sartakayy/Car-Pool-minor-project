@@ -58,10 +58,12 @@
   </div>
   
   <!-- Loading Overlay -->
-  <div class="loading-overlay" *ngIf="loading">
-    <div class="loading-spinner">
-      <i class="fas fa-spinner fa-spin"></i>
+  @if (loading) {
+    <div class="loading-overlay">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+      <p>Signing you in...</p>
     </div>
-    <p>Signing you in...</p>
-  </div>
+  }
 </div>

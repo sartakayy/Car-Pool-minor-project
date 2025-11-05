@@ -74,6 +74,51 @@
       "car": "Toyota Camry",
       "status": "available",
       "createdAt": "2025-11-04T13:00:00Z"
+    },
+    {
+      "id": "6",
+      "from": "Home",
+      "to": "Office",
+      "date": "2025-11-07",
+      "time": "09:00",
+      "driver": "Current User",
+      "driverId": "mbAITkFGa6WQk5J2vec8GACDi3D2",
+      "availableSeats": 3,
+      "totalSeats": 4,
+      "pricePerSeat": 12,
+      "car": "Honda Accord",
+      "status": "available",
+      "createdAt": "2025-11-05T08:00:00Z"
+    },
+    {
+      "id": "7",
+      "from": "Shopping Mall",
+      "to": "Train Station",
+      "date": "2025-11-08",
+      "time": "16:30",
+      "driver": "Current User",
+      "driverId": "current-user",
+      "availableSeats": 2,
+      "totalSeats": 4,
+      "pricePerSeat": 8,
+      "car": "Toyota Prius",
+      "status": "available",
+      "createdAt": "2025-11-05T09:00:00Z"
+    },
+    {
+      "id": "1762362119832",
+      "from": "Test",
+      "to": "Test",
+      "date": "2025-11-24",
+      "time": "11:11",
+      "availableSeats": 1,
+      "totalSeats": 1,
+      "pricePerSeat": 10,
+      "car": "Ciaz",
+      "status": "available",
+      "driverId": "mbAITkFGa6WQk5J2vec8GACDi3D2",
+      "driver": "Current User",
+      "createdAt": "2025-11-05T17:01:59.832Z"
     }
   ],
   "bookings": [

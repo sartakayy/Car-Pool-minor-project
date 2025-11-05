@@ -153,12 +153,26 @@ export class RidesService {
             return rides.filter(ride => 
               ride.status === 'available' && 
               ride.availableSeats > 0 &&
-              ride.driverId !== this.currentUserId &&
               !bookedRideIds.includes(ride.id)
             );
           })
         );
       })
+    );
+  }
+
+  // Check if a ride belongs to the current user (they are the driver)
+  isUserDriver(ride: Ride): boolean {
+    return ride.driverId === this.currentUserId;
+  }
+
+  // Get rides offered by the current user
+  getMyOfferedRides(): Observable<Ride[]> {
+    return this.rides$.pipe(
+      map(rides => rides.filter(ride => 
+        ride.driverId === this.currentUserId &&
+        ride.status === 'available'
+      ))
     );
   }
 
@@ -266,6 +280,50 @@ export class RidesService {
     return this.http.delete(`${this.apiUrl}/bookings/${bookingId}`).pipe(
       tap(() => this.loadBookings()),
       map(() => void 0)
+    );
+  }
+
+  // Delete a ride (only by the driver/owner)
+  deleteRide(rideId: string): Observable<void> {
+    const ride = this.ridesSubject.value.find(r => r.id === rideId);
+    if (!ride) {
+      throw new Error('Ride not found');
+    }
+
+    // Check if current user is the driver
+    if (ride.driverId !== this.currentUserId) {
+      throw new Error('You can only delete your own rides');
+    }
+
+    // First, cancel all bookings for this ride
+    return this.http.get<Booking[]>(`${this.apiUrl}/bookings?rideId=${rideId}`).pipe(
+      switchMap(bookings => {
+        // If there are bookings, we need to handle them
+        if (bookings.length > 0) {
+          const deleteBookings = bookings.map(booking => 
+            this.http.delete(`${this.apiUrl}/bookings/${booking.id}`)
+          );
+          
+          // Delete all bookings first, then delete the ride
+          return this.http.delete(`${this.apiUrl}/rides/${rideId}`).pipe(
+            tap(() => {
+              // Delete associated bookings
+              deleteBookings.forEach(deleteObs => deleteObs.subscribe());
+              this.loadRides();
+              this.loadBookings();
+            }),
+            map(() => void 0)
+          );
+        } else {
+          // No bookings, just delete the ride
+          return this.http.delete(`${this.apiUrl}/rides/${rideId}`).pipe(
+            tap(() => {
+              this.loadRides();
+            }),
+            map(() => void 0)
+          );
+        }
+      })
     );
   }
 
