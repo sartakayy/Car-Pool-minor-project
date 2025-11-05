@@ -1,7 +1,67 @@
-<div class="splash">
-    <div class="login">
-        <div class="logo">PoolParty</div>
-        <button class="btn mb-2" (click)="onLoginPress()">Login With Google</button>
-        <p class="text">By using this app you agree to <br> Privacy policies and Terms</p>
+<div class="login-container">
+  <!-- Background Elements -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <!-- Login Card -->
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">
+        <i class="fas fa-car"></i>
+        <span>PoolParty</span>
+      </div>
+      <h2>Welcome Back</h2>
+      <p>Sign in to start your carpooling journey</p>
     </div>
+    
+    <div class="login-content">
+      <button class="google-login-btn" (click)="onLoginPress()">
+        <div class="btn-icon">
+          <i class="fab fa-google"></i>
+        </div>
+        <span>Continue with Google</span>
+        <div class="btn-arrow">
+          <i class="fas fa-arrow-right"></i>
+        </div>
+      </button>
+      
+      <div class="divider">
+        <span>Quick & Secure</span>
+      </div>
+      
+      <div class="features">
+        <div class="feature-item">
+          <i class="fas fa-shield-alt"></i>
+          <span>Secure Authentication</span>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-users"></i>
+          <span>Connect with Riders</span>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-route"></i>
+          <span>Smart Route Matching</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="login-footer">
+      <p class="terms-text">
+        By signing in, you agree to our 
+        <a href="#" class="link">Privacy Policy</a> and 
+        <a href="#" class="link">Terms of Service</a>
+      </p>
+    </div>
+  </div>
+  
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <p>Signing you in...</p>
+  </div>
 </div>

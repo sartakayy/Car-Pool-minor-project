@@ -1,0 +1,147 @@
+{
+  "rides": [
+    {
+      "id": "1",
+      "from": "Downtown",
+      "to": "Airport",
+      "date": "2025-11-05",
+      "time": "14:30",
+      "driver": "John Doe",
+      "driverId": "user1",
+      "availableSeats": 2,
+      "totalSeats": 4,
+      "pricePerSeat": 15,
+      "car": "Honda Civic",
+      "status": "available",
+      "createdAt": "2025-11-04T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "from": "University",
+      "to": "Mall",
+      "date": "2025-11-06",
+      "time": "18:00",
+      "driver": "Jane Smith",
+      "driverId": "user2",
+      "availableSeats": 2,
+      "totalSeats": 3,
+      "pricePerSeat": 8,
+      "car": "Toyota Corolla",
+      "status": "available",
+      "createdAt": "2025-11-04T11:00:00Z"
+    },
+    {
+      "id": "3",
+      "from": "Central Station",
+      "to": "Business District",
+      "date": "2025-11-05",
+      "time": "08:00",
+      "driver": "Mike Johnson",
+      "driverId": "user3",
+      "availableSeats": 3,
+      "totalSeats": 4,
+      "pricePerSeat": 12,
+      "car": "Volkswagen Golf",
+      "status": "available",
+      "createdAt": "2025-11-04T09:00:00Z"
+    },
+    {
+      "id": "4",
+      "from": "Beach Area",
+      "to": "City Center",
+      "date": "2025-11-05",
+      "time": "16:00",
+      "driver": "Sarah Wilson",
+      "driverId": "user4",
+      "availableSeats": 2,
+      "totalSeats": 4,
+      "pricePerSeat": 10,
+      "car": "Ford Focus",
+      "status": "available",
+      "createdAt": "2025-11-04T12:00:00Z"
+    },
+    {
+      "id": "5",
+      "from": "Airport",
+      "to": "University",
+      "date": "2025-11-06",
+      "time": "12:00",
+      "driver": "David Brown",
+      "driverId": "user5",
+      "availableSeats": 4,
+      "totalSeats": 4,
+      "pricePerSeat": 20,
+      "car": "Toyota Camry",
+      "status": "available",
+      "createdAt": "2025-11-04T13:00:00Z"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "1762266967716",
+      "rideId": "1",
+      "passengerId": "mbAITkFGa6WQk5J2vec8GACDi3D2",
+      "passengerName": "Current User",
+      "seatsBooked": 1,
+      "totalCost": 15,
+      "bookingDate": "2025-11-04T14:36:07.716Z",
+      "status": "confirmed"
+    }
+  ],
+  "users": [
+    {
+      "id": "current-user",
+      "name": "Current User",
+      "email": "user@example.com",
+      "phone": "+1234567890",
+      "rating": 4.8,
+      "totalRides": 15,
+      "joinDate": "2025-01-15"
+    },
+    {
+      "id": "user1",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567891",
+      "rating": 4.9,
+      "totalRides": 25,
+      "joinDate": "2024-12-01"
+    },
+    {
+      "id": "user2",
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "phone": "+1234567892",
+      "rating": 4.7,
+      "totalRides": 18,
+      "joinDate": "2025-02-10"
+    },
+    {
+      "id": "user3",
+      "name": "Mike Johnson",
+      "email": "mike@example.com",
+      "phone": "+1234567893",
+      "rating": 4.6,
+      "totalRides": 22,
+      "joinDate": "2024-11-20"
+    },
+    {
+      "id": "user4",
+      "name": "Sarah Wilson",
+      "email": "sarah@example.com",
+      "phone": "+1234567894",
+      "rating": 4.8,
+      "totalRides": 30,
+      "joinDate": "2024-10-05"
+    },
+    {
+      "id": "user5",
+      "name": "David Brown",
+      "email": "david@example.com",
+      "phone": "+1234567895",
+      "rating": 4.5,
+      "totalRides": 12,
+      "joinDate": "2025-03-01"
+    }
+  ]
+}

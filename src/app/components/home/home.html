@@ -1,2 +1,294 @@
-<p>Welcome {{user}}</p>
-<button (click)="onLogoutPress()">Logout</button>
+<div class="home-container">
+    <!-- Content Area -->
+    <main class="content">
+        <!-- Loading Indicator -->
+        <div class="loading-container" *ngIf="loading">
+            <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+            <h3>Loading...</h3>
+            <p>Getting your rides ready...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" *ngIf="error && !loading">
+            <i class="fas fa-exclamation-triangle error-icon"></i>
+            <h3>Oops! Something went wrong</h3>
+            <p>{{error}}</p>
+            <button class="btn-retry" (click)="loadRidesData()">
+                <i class="fas fa-redo-alt"></i> Try Again
+            </button>
+        </div>
+
+        <!-- Upcoming Rides Section -->
+        <section class="rides-section" *ngIf="activeTab === 'upcoming'">
+            <h2 class="section-title">Upcoming Rides</h2>
+            
+            <!-- Debug Button (temporary) -->
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <button class="btn" style="background: orange; color: white; padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer;" (click)="testWithFirebaseUser()">
+                    🔧 Test with Firebase User (Debug)
+                </button>
+            </div>
+            
+            <div class="rides-grid" *ngIf="filteredUpcomingRides.length > 0; else noUpcomingRides">
+                <div class="ride-card" *ngFor="let ride of filteredUpcomingRides">
+                    <div class="ride-header">
+                        <div class="route">
+                            <span class="from">{{ride.from}}</span>
+                            <span class="arrow">→</span>
+                            <span class="to">{{ride.to}}</span>
+                        </div>
+                        <div class="ride-status upcoming">Upcoming</div>
+                    </div>
+                    <div class="ride-details">
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                            <span>{{ride.date}} at {{ride.time}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-user"></i></span>
+                            <span>Driver: {{ride.driver}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-car"></i></span>
+                            <span>{{ride.car}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-dollar-sign"></i></span>
+                            <span>${{ride.pricePerSeat}} per seat</span>
+                        </div>
+                    </div>
+                    <div class="ride-actions">
+                        <button class="btn-cancel" (click)="cancelRide(ride)">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <ng-template #noUpcomingRides>
+                <div class="empty-state">
+                    <span class="empty-icon"><i class="fas fa-inbox"></i></span>
+                    <h3>No upcoming rides</h3>
+                    <p>Book a ride from the available rides section or offer your own ride!</p>
+                </div>
+            </ng-template>
+        </section>
+
+        <!-- Available Rides Section -->
+        <section class="rides-section" *ngIf="activeTab === 'available'">
+            <h2 class="section-title">Available Rides</h2>
+            <!-- Search Section - Only show for Available Rides -->
+            <section class="search-section" *ngIf="!loading && !error && activeTab === 'available'">
+                <div class="search-container">
+                    <!-- Search and Filter Row -->
+                    <div class="search-filter-row">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Search rides by location, destination..."
+                                [(ngModel)]="searchQuery" (input)="onSearchChange()" name="searchRides">
+                            <button class="search-clear" *ngIf="searchQuery && searchQuery.length > 0"
+                                (click)="clearSearch()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <button class="filter-toggle-btn" (click)="toggleAdvancedFilters()" 
+                                [class.active]="showAdvancedFilters">
+                            <i class="fas fa-sliders-h"></i>
+                            <span class="filter-text">Filters</span>
+                            <i class="fas fa-chevron-down" [class.rotated]="showAdvancedFilters"></i>
+                        </button>
+                    </div>
+
+                    <!-- Advanced Search Filters -->
+                    <div class="search-filters" [class.expanded]="showAdvancedFilters">
+
+                        <div class="filter-options" *ngIf="showAdvancedFilters">
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label>Date Range</label>
+                                    <div class="date-inputs">
+                                        <input type="date" [(ngModel)]="searchFilters.startDate"
+                                            (change)="onFilterChange()" name="startDate">
+                                        <span class="date-separator">to</span>
+                                        <input type="date" [(ngModel)]="searchFilters.endDate"
+                                            (change)="onFilterChange()" name="endDate">
+                                    </div>
+                                </div>
+
+                                <div class="filter-group">
+                                    <label>Max Price per Seat</label>
+                                    <div class="price-input">
+                                        <span class="currency">$</span>
+                                        <input type="number" [(ngModel)]="searchFilters.maxPrice"
+                                            (input)="onFilterChange()" placeholder="Any" min="0" step="5"
+                                            name="maxPrice">
+                                    </div>
+                                </div>
+
+                                <div class="filter-group">
+                                    <label>Available Seats</label>
+                                    <select [(ngModel)]="searchFilters.minSeats" (change)="onFilterChange()"
+                                        name="minSeats">
+                                        <option value="">Any</option>
+                                        <option value="1">1+</option>
+                                        <option value="2">2+</option>
+                                        <option value="3">3+</option>
+                                        <option value="4">4+</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="filter-actions">
+                                <button class="btn-clear-filters" (click)="clearAllFilters()">
+                                    <i class="fas fa-eraser"></i> Clear All
+                                </button>
+                                <span class="results-count" *ngIf="filteredRidesCount !== null">
+                                    {{filteredRidesCount}} ride{{filteredRidesCount !== 1 ? 's' : ''}} found
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="rides-grid" *ngIf="filteredAvailableRides.length > 0; else noAvailableRides">
+                <div class="ride-card" [class.has-conflict]="hasConflict(ride.id)"
+                    *ngFor="let ride of filteredAvailableRides">
+                    <!-- Conflict Warning -->
+                    <div class="conflict-warning" *ngIf="hasConflict(ride.id)">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Time conflict with your existing booking</span>
+                    </div>
+
+                    <div class="ride-header">
+                        <div class="route">
+                            <span class="from">{{ride.from}}</span>
+                            <span class="arrow">→</span>
+                            <span class="to">{{ride.to}}</span>
+                        </div>
+                        <div class="ride-status available">Available</div>
+                    </div>
+                    <div class="ride-details">
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                            <span>{{ride.date}} at {{ride.time}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-user"></i></span>
+                            <span>Driver: {{ride.driver}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-car"></i></span>
+                            <span>{{ride.car}}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-chair"></i></span>
+                            <span>{{ride.availableSeats}} seats available</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="icon"><i class="fas fa-dollar-sign"></i></span>
+                            <span>${{ride.pricePerSeat}} per seat</span>
+                        </div>
+                    </div>
+                    <div class="ride-actions">
+                        <button class="btn-book" [disabled]="ride.availableSeats === 0"
+                            [class.conflict-btn]="hasConflict(ride.id)" (click)="bookRide(ride)"
+                            [title]="hasConflict(ride.id) ? 'Warning: This ride may conflict with your existing bookings' : ''">
+                            {{ride.availableSeats > 0 ? (hasConflict(ride.id) ? 'Book (Conflict)' : 'Book Ride') :
+                            'Full'}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <ng-template #noAvailableRides>
+                <div class="empty-state">
+                    <span class="empty-icon"><i class="fas fa-road"></i></span>
+                    <h3>No available rides</h3>
+                    <p>Be the first to offer a ride!</p>
+                </div>
+            </ng-template>
+        </section>
+    </main>
+
+    <!-- Offer Ride Modal -->
+    <div class="modal-overlay" *ngIf="showOfferRideModal" (click)="closeOfferRideModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2><i class="fas fa-car"></i> Offer a Ride</h2>
+                <button class="close-btn" (click)="closeOfferRideModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-content">
+                <form class="offer-ride-form" (ngSubmit)="onOfferRide()">
+                    <div class="form-group">
+                        <label for="from">From</label>
+                        <input type="text" id="from" [(ngModel)]="newRide.from" name="from"
+                            placeholder="Enter pickup location" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="to">To</label>
+                        <input type="text" id="to" [(ngModel)]="newRide.to" name="to" placeholder="Enter destination"
+                            required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" [(ngModel)]="newRide.date" name="date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <input type="time" id="time" [(ngModel)]="newRide.time" name="time" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="car">Car Model</label>
+                        <input type="text" id="car" [(ngModel)]="newRide.car" name="car" placeholder="e.g., Honda Civic"
+                            required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="seats">Available Seats</label>
+                            <select id="seats" [(ngModel)]="newRide.availableSeats" name="seats">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price">Price per Seat ($)</label>
+                            <input type="number" id="price" [(ngModel)]="newRide.pricePerSeat" name="price" min="0"
+                                step="0.01" placeholder="0.00" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" (click)="closeOfferRideModal()">Cancel</button>
+                        <button type="submit" class="btn-offer" [disabled]="!isFormValid()">
+                            Offer Ride
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-navigation">
+        <button class="nav-item" [class.active]="activeTab === 'upcoming'" (click)="setActiveTab('upcoming')">
+            <span class="nav-icon"><i class="fas fa-calendar-alt"></i></span>
+        </button>
+        <button class="nav-item" [class.active]="activeTab === 'available'" (click)="setActiveTab('available')">
+            <span class="nav-icon"><i class="fas fa-search"></i></span>
+        </button>
+        <button class="nav-item" (click)="openOfferRideModal()">
+            <span class="nav-icon"><i class="fas fa-plus"></i></span>
+        </button>
+        <button class="nav-item" (click)="onLogoutPress()">
+            <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+        </button>
+    </nav>
+</div>
