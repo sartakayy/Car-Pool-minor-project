@@ -22,13 +22,6 @@
         <section class="rides-section" *ngIf="activeTab === 'upcoming'">
             <h2 class="section-title">Upcoming Rides</h2>
             
-            <!-- Debug Button (temporary) -->
-            <div style="text-align: center; margin-bottom: 1rem;">
-                <button class="btn" style="background: orange; color: white; padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer;" (click)="testWithFirebaseUser()">
-                    🔧 Test with Firebase User (Debug)
-                </button>
-            </div>
-            
             <div class="rides-grid" *ngIf="filteredUpcomingRides.length > 0; else noUpcomingRides">
                 <div class="ride-card" *ngFor="let ride of filteredUpcomingRides">
                     <div class="ride-header">
@@ -54,7 +47,7 @@
                         </div>
                         <div class="detail-item">
                             <span class="icon"><i class="fas fa-dollar-sign"></i></span>
-                            <span>${{ride.pricePerSeat}} per seat</span>
+                            <span>₹{{ride.pricePerSeat}} per seat</span>
                         </div>
                     </div>
                     <div class="ride-actions">
@@ -116,7 +109,7 @@
                                 <div class="filter-group">
                                     <label>Max Price per Seat</label>
                                     <div class="price-input">
-                                        <span class="currency">$</span>
+                                        <span class="currency">₹</span>
                                         <input type="number" [(ngModel)]="searchFilters.maxPrice"
                                             (input)="onFilterChange()" placeholder="Any" min="0" step="5"
                                             name="maxPrice">
@@ -184,7 +177,7 @@
                         </div>
                         <div class="detail-item">
                             <span class="icon"><i class="fas fa-dollar-sign"></i></span>
-                            <span>${{ride.pricePerSeat}} per seat</span>
+                            <span>₹{{ride.pricePerSeat}} per seat</span>
                         </div>
                     </div>
                     <div class="ride-actions">
@@ -265,7 +258,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="price">Price per Seat ($)</label>
+                            <label for="price">Price per Seat (₹)</label>
                             <input type="number" id="price" [(ngModel)]="newRide.pricePerSeat" name="price" min="0"
                                 step="0.01" placeholder="0.00" required>
                         </div>
